@@ -17,7 +17,7 @@ $(() => {
 
 (function(){
 
-  const hashy = function(options){
+  var hashy = function(options){
 
     if (! options) {
       options = {};
@@ -109,7 +109,7 @@ $(() => {
 
       cancelAnimationFrame(hashy.runtime);
 
-      let elemPos = Math.abs(elem.offsetTop);
+      let elemPos = Math.abs(elem.offsetTop) + 1;
 
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
@@ -119,10 +119,11 @@ $(() => {
           if(i < y){
             i = i + diff/100;
             document.body.scrollTop = i;
+            document.documentElement.scrollTop = i;
           } else{
            clearInterval(interval);
-           hashy.setHash(hash);
            hashy.checkElem();
+           hashy.setHash(hash);
           }
         }
 
@@ -136,10 +137,11 @@ $(() => {
           if(i > y){
             i = i - diff/100;
             document.body.scrollTop = i;
+            document.documentElement.scrollTop = i;
           } else{
            clearInterval(interval);
-           hashy.setHash(hash);
            hashy.checkElem();
+           hashy.setHash(hash);
           }
         }
 
