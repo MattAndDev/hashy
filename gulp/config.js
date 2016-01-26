@@ -1,16 +1,18 @@
 'use strict';
 
 var dest = "./dist";
+var test = "./test";
 var src = './src';
 
 module.exports = {
   destFolder: dest,
+  testFolder: test,
 
   browserSync: {
     port: 9000,
     server: {
       // Serve up our build folder
-      baseDir: dest
+      baseDir: test
     },
     notify: false,
     open: false
@@ -18,7 +20,7 @@ module.exports = {
 
   sass: {
     src: src + "/sass/**/*.{sass,scss}",
-    dest: dest + '/css',
+    dest: test + '/css',
     prefix: [
       'ie >= 9',
       'ie_mob >= 10',
@@ -36,16 +38,12 @@ module.exports = {
     }
   },
 
-  images: {
-    src: src + "/images/**",
-    dest: dest + "/images"
-  },
 
   markup: {
     partialsGlob: "**/*.html",
     partialsSrc: src + '/html/partials/',
     src: src + "/html/*.tpl.html",
-    dest: dest + "/"
+    dest: test + "/"
   },
 
   jslint: {
@@ -60,45 +58,6 @@ module.exports = {
     jsDest: dest + '/js'
   },
 
-  svgSprite: {
-    type: 'inline', // 'inline'
-    src: src + '/icons',
-    glob: '**/*.svg',
-    dest: dest + '/images',
-    removeFills: true,
-    optionsInline: {
-      mode: {
-        symbol: {
-          sprite: 'sprite.svg',
-          dest: '.',
-          render: {
-            scss: {
-              template: 'gulp/tpl/_sprite-inline.scss',
-              dest: '../../src/sass/_sprite.scss'
-            }
-          }
-        }
-      }
-    },
-    optionsBackground: {
-      mode: {
-        css: {
-          layout: 'horizontal',
-          sprite: 'sprite.svg',
-          dest: '.',
-          render: {
-            scss: {
-              template: 'gulp/tpl/_sprite-background.scss',
-              dest: '../../src/sass/_sprite.scss'
-            }
-          }
-        }
-      },
-      variables: {
-        cssPath: '../images/'
-      }
-    }
-  },
 
   browserify: {
     // A separate bundle will be generated for each
@@ -111,15 +70,15 @@ module.exports = {
       extensions: ['.js'],
       // list of modules to make require-able externally
       require: ['jquery']
-      // old: require: ['jquery', 'backbone/node_modules/underscore']
-      // See https://github.com/greypants/gulp-starter/issues/87 for note about
-      // why this is 'backbone/node_modules/underscore' and not 'underscore'
-    // }, {
-    //   entries: src + '/javascript/page.js',
-    //   dest: dest + '/js',
-    //   outputName: 'page.js',
-    //   // list of externally available modules to exclude from the bundle
-    //   external: ['jquery', 'underscore']
-    }]
+  },{
+    entries: src + '/js/main.js',
+    dest: test + '/js',
+    outputName: 'main.js',
+    // Additional file extentions to make optional
+    extensions: ['.js'],
+    // list of modules to make require-able externally
+    require: ['jquery']
+  }
+  ]
   }
 };

@@ -15,10 +15,6 @@ var watch = require('gulp-watch');
 gulp.task('watch', ['clean'], function() {
   runSequence('default', ['watchify','browserSync']);
 
-  watch(config.svgSprite.src + '/' + config.svgSprite.glob, function(){
-    runSequence('sprite', browserSync.reload);
-  });
-
   watch(config.jslint.srcJs, function(){
     runSequence('eslint');
   });
@@ -27,9 +23,6 @@ gulp.task('watch', ['clean'], function() {
     runSequence('sass');
   });
 
-  watch(config.images.src, function(){
-    runSequence('images', browserSync.reload);
-  });
 
   watch([config.markup.src, config.markup.partialsSrc + config.markup.partialsGlob], function(){
     runSequence('markup', browserSync.reload);

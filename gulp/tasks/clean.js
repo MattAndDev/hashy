@@ -2,8 +2,9 @@
 
 var gulp = require('gulp');
 var del = require('del');
+var runSequence = require('run-sequence');
 var config   = require('../config');
 
 gulp.task('clean', function(cb){
-  del(config.destFolder, {dot: true, force: true}, cb);
+  del([config.destFolder, config.testFolder],cb);
 });
