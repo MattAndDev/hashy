@@ -16,13 +16,12 @@ gulp.task('watch', ['clean'], function() {
   runSequence('default', ['watchify','browserSync']);
 
   watch(config.jslint.srcJs, function(){
-    runSequence('eslint');
+    runSequence('eslint','libraryJs');
   });
 
   watch(config.sass.src, function(){
     runSequence('sass');
   });
-
 
   watch([config.markup.src, config.markup.partialsSrc + config.markup.partialsGlob], function(){
     runSequence('markup', browserSync.reload);

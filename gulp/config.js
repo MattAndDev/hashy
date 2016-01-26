@@ -50,12 +50,9 @@ module.exports = {
     srcJs: src + '/js/**/*.js'
   },
 
-  production: {
-    cssSrc: dest + '/css/*.css',
-    jsSrc: dest + '/js/*.js',
-    dest: dest,
-    cssDest: dest + '/css',
-    jsDest: dest + '/js'
+  library: {
+    jsSrc: src + '/js/hashy.js',
+    dest: dest
   },
 
 
@@ -64,21 +61,13 @@ module.exports = {
     // bundle config in the list below
     bundleConfigs: [{
       entries: src + '/js/main.js',
-      dest: dest + '/js',
+      dest: test + '/js',
       outputName: 'main.js',
       // Additional file extentions to make optional
       extensions: ['.js'],
       // list of modules to make require-able externally
       require: ['jquery']
-  },{
-    entries: src + '/js/main.js',
-    dest: test + '/js',
-    outputName: 'main.js',
-    // Additional file extentions to make optional
-    extensions: ['.js'],
-    // list of modules to make require-able externally
-    require: ['jquery']
-  }
+    }
   ]
   }
 };

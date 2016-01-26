@@ -9,10 +9,13 @@
    See browserify.bundleConfigs in gulp/config.js
 */
 
+var babel        = require('babelify');
 var browserify   = require('browserify');
 var browserSync  = require('browser-sync');
 var watchify     = require('watchify');
 var mergeStream  = require('merge-stream');
+var sourcemaps   = require('gulp-sourcemaps');
+var buffer       = require('vinyl-buffer');
 var bundleLogger = require('../util/bundleLogger');
 var gulp         = require('gulp');
 var handleErrors = require('../util/handleErrors');
@@ -33,7 +36,8 @@ var browserifyTask = function(devMode) {
       bundleConfig = _.omit(bundleConfig, ['external', 'require']);
     }
 
-    var b = browserify(bundleConfig);
+
+    var b = browserify(bundleConfig).transform(babel ,{presets: ["es2015"]} );
 
     var bundle = function() {
       // Log when bundling starts
@@ -47,11 +51,11 @@ var browserifyTask = function(devMode) {
         // stream gulp compatible. Specify the
         // desired output filename here.
         .pipe(source(bundleConfig.outputName))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write())
         // Specify the output destination
         .pipe(gulp.dest(bundleConfig.dest))
-        .pipe(browserSync.reload({
-          stream: true
-        }));
     };
 
     if(devMode) {
@@ -78,7 +82,7 @@ var browserifyTask = function(devMode) {
 };
 
 gulp.task('browserify', function() {
-  return browserifyTask()
+  return browserifyTask();
 });
 
 // Exporting the task so we can call it directly in our watch task, with the 'devMode' option

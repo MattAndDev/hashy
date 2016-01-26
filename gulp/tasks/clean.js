@@ -5,6 +5,6 @@ var del = require('del');
 var runSequence = require('run-sequence');
 var config   = require('../config');
 
-gulp.task('clean', function(cb){
-  del([config.destFolder, config.testFolder],cb);
+gulp.task('clean', function(){
+  del([config.destFolder, config.testFolder]);
 });
