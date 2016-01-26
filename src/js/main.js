@@ -8,16 +8,21 @@ import plugin from 'plugin';
 // svg4everybody();
 
 $(() => {
-  // $('*').on('click',function(){
-  //   hashy.go('two');
-  // })
-  var hash = new hashy
+  var hash = new hashy({
+    averageSpeed: 100,
+    triggerClass: '.hashy-go-to'
+  })
 });
 
 
 (function(){
 
   var hashy = function(options){
+
+
+    // ===========================================================================
+    // Managing the options
+    // ===========================================================================
 
     if (! options) {
       options = {};
@@ -29,28 +34,8 @@ $(() => {
     this.triggerElemeDataAttr = options.triggerElemeDataAttr || 'data-go'
     this.averageSpeed = options.averageSpeed || 100
 
-    // This shoudl be fixed now jsut working when getting an selectByID
-
-    if(window.location.hash.length && window.location.hash != 'undefined'){
-      let cleanHash = window.location.hash.replace('#', '');
-      let elem = document.querySelector('[' + this.dataAttr + '="' + cleanHash + '"]');
-      elem.scrollIntoView()
-    }
 
 
-    this.runtime = function(){};
-
-
-
-    // =============================
-    // Check when element is in window
-    // =============================
-
-    this.elems = document.querySelectorAll(this.elemClass);
-
-    this.scrollOffset = 0;
-
-    var selectedElem = null;
 
     hashy.checkElem = () =>{
 
@@ -102,12 +87,10 @@ $(() => {
       }
     }
 
-    hashy.bind = (className) => {
-      var anchors = document.querySelectorAll(className);
-      for(var i =0; i < anchors.length; i++){
-          var elem = anchors[i];
+    hashy.bind = (elems) => {
+      for(var i =0; i < elems.length; i++){
+          var elem = elems[i];
           var attr = this.triggerElemeDataAttr;
-          console.log(attr);
           elem.onclick = function(e){
             e.preventDefault();
             hashy.go(e.target.getAttribute(attr))
@@ -167,10 +150,56 @@ $(() => {
     }
 
 
+    hashy.init = () => {
+      hashy.checkElem()
+      hashy.bind(this.triggerElems)
+    }
 
-    hashy.checkElem()
-    hashy.bind(this.triggerElemeClass)
+
+
+    // ===========================================================================
+    // On pageload:
+    // Look for valid location hash and scroll to position via scrollIntoView
+    // ===========================================================================
+
+    if(window.location.hash.length && window.location.hash != 'undefined'){
+      let cleanHash = window.location.hash.replace('#', '');
+      let elem = document.querySelector('[' + this.dataAttr + '="' + cleanHash + '"]');
+      elem.scrollIntoView()
+    }
+
+    // ===========================================================================
+
+
+
+    // ===========================================================================
+    // init global vars
+    // ===========================================================================
+
+    //  Raf runtime
+    this.runtime = function(){};
+    //  All hashy elems
+    this.elems = document.querySelectorAll(this.elemClass);
+    //  All hashy triggers
+    this.triggerElems = document.querySelectorAll(this.triggerElemeClass);
+    // Set inenr scrolling to 0
+    this.scrollOffset = 0;
+    // no selectedElem
+    var selectedElem = null;
+
+    // Starting the magic
+    hashy.init()
+
+    // ===========================================================================
+    // Finish init global vars
+    // ===========================================================================
+
+    // Closing hashy
   };
+
+
+
+
 
   window.hashy = hashy;
 }())
