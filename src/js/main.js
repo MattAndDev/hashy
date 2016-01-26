@@ -27,6 +27,7 @@ $(() => {
     this.dataAttr = options.data || 'data-hash'
     this.triggerElemeClass = options.triggerClass || '.hashy-go'
     this.triggerElemeDataAttr = options.triggerElemeDataAttr || 'data-go'
+    this.averageSpeed = options.averageSpeed || 100
 
     // This shoudl be fixed now jsut working when getting an selectByID
 
@@ -123,16 +124,16 @@ $(() => {
     hashy.scrollTo = (elem, hash) => {
 
       cancelAnimationFrame(hashy.runtime);
-
+      console.log(this.averageSpeed);
       let elemPos = Math.abs(elem.offsetTop) + 1;
 
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
         var y = elemPos;
         var diff = y -i;
-        function scrollPlus() {
+        var scrollPlus = () => {
           if(i < y){
-            i = i + diff/100;
+            i = i + diff/this.averageSpeed;
             document.body.scrollTop = i;
             document.documentElement.scrollTop = i;
           } else{
@@ -148,9 +149,9 @@ $(() => {
         var i = this.scrollOffset;
         var y = elemPos;
         var diff = i - y;
-        function scrollMinus() {
+        var scrollMinus = () => {
           if(i > y){
-            i = i - diff/100;
+            i = i - diff/this.averageSpeed;
             document.body.scrollTop = i;
             document.documentElement.scrollTop = i;
           } else{
