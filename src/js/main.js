@@ -8,9 +8,9 @@ import plugin from 'plugin';
 // svg4everybody();
 
 $(() => {
-  $('*').on('click',function(){
-    hashy.go('two');
-  })
+  // $('*').on('click',function(){
+  //   hashy.go('two');
+  // })
   var hash = new hashy
 });
 
@@ -25,6 +25,8 @@ $(() => {
 
     this.elemClass = options.class || '.hashy-item';
     this.dataAttr = options.data || 'data-hash'
+    this.triggerElemeClass = options.triggerClass || '.hashy-go'
+    this.triggerElemeDataAttr = options.triggerElemeDataAttr || 'data-go'
 
     // This shoudl be fixed now jsut working when getting an selectByID
 
@@ -52,7 +54,7 @@ $(() => {
     hashy.checkElem = () =>{
 
 
-    var scrollPos = () => {
+      var scrollPos = () => {
         var getPosition, scrollOffset;
         scrollOffset = 0;
 
@@ -96,6 +98,19 @@ $(() => {
         window.location.hash = hash;
       } else {
         return false;
+      }
+    }
+
+    hashy.bind = (className) => {
+      var anchors = document.querySelectorAll(className);
+      for(var i =0; i < anchors.length; i++){
+          var elem = anchors[i];
+          var attr = this.triggerElemeDataAttr;
+          console.log(attr);
+          elem.onclick = function(e){
+            e.preventDefault();
+            hashy.go(e.target.getAttribute(attr))
+          };
       }
     }
 
@@ -153,6 +168,7 @@ $(() => {
 
 
     hashy.checkElem()
+    hashy.bind(this.triggerElemeClass)
   };
 
   window.hashy = hashy;
