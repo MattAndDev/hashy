@@ -13,8 +13,8 @@
 
     this.elemClass = options.class || '.hashy-item';
     this.dataAttr = options.data || 'data-hash'
-    this.triggerElemeClass = options.triggerClass || '.hashy-go'
-    this.triggerElemeDataAttr = options.triggerElemeDataAttr || 'data-go'
+    this.triggerClass = options.triggerClass || '.hashy-go'
+    this.triggerAttr = options.triggerAttr || 'href'
     this.averageSpeed = options.averageSpeed || 100
 
 
@@ -45,7 +45,7 @@
             if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
               if (elem !== selectedElem ) {
                 selectedElem = elem;
-                hashy.setHash(selectedElem.getAttribute(this.dataAttr));
+                hashy.setHash(selectedElem.getAttribute(this  .dataAttr));
               };
             }
           });
@@ -73,7 +73,11 @@
     hashy.bind = (elems) => {
       for(var i =0; i < elems.length; i++){
           var elem = elems[i];
-          var attr = this.triggerElemeDataAttr;
+          if (this.triggerAttr) {
+            var attr = this.triggerAttr;
+          } else {
+            var attr = href;
+          }
           elem.onclick = function(e){
             e.preventDefault();
             hashy.go(e.target.getAttribute(attr))
@@ -164,7 +168,7 @@
     //  All hashy elems
     this.elems = document.querySelectorAll(this.elemClass);
     //  All hashy triggers
-    this.triggerElems = document.querySelectorAll(this.triggerElemeClass);
+    this.triggerElems = document.querySelectorAll(this.triggerClass);
     // Set inenr scrolling to 0
     this.scrollOffset = 0;
     // no selectedElem
