@@ -196,7 +196,6 @@
     var resizeTimeout;
     hashy.doneResize = () => {
       this.globalOffset = hashy.checkOffset(this.offset);
-      console.log(this.globalOffset);
     }
     window.onresize = function(){
       clearTimeout(resizeTimeout);
@@ -216,7 +215,7 @@
     if(window.location.hash.length && window.location.hash != 'undefined'){
       let cleanHash = window.location.hash.replace('#', '');
       let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
-      document.documentElement.scrollTop = elem.offsetTop + this.offset;
+      document.documentElement.scrollTop = elem.offsetTop + this.globalOffset;
       document.body.scrollTop = elem.offsetTop + this.globalOffset;
     }
 
