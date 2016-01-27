@@ -34,17 +34,17 @@
           };
 
 
-          var elemArray = this.elems;
+          var elemArray = hashy.Elems;
 
 
           elemArray.forEach( (elem) => {
-            var elemOffset = elem.offsetTop + this.globalOffset;
+            var elemOffset = elem.offsetTop + hashy.GlobalOffset;
             var elemHeight = elem.offsetHeight || elem.clientHeight;
             var height = window.innerHeight || document.documentElement.clientHeight;
             if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
-              if (elem !== selectedElem ) {
-                selectedElem = elem;
-                hashy.setHash(selectedElem.getAttribute(this.itemAttr));
+              if (elem !== hashy.SelectedElem ) {
+                hashy.selectedElem = elem;
+                hashy.setHash(hashy.selectedElem.getAttribute(this.itemAttr));
               };
             }
           });
@@ -61,6 +61,8 @@
 
     }
 
+
+
     hashy.setHash = (hash) => {
       if (window.location.hash !== hash) {
         window.location.hash = hash;
@@ -68,6 +70,7 @@
         return false;
       }
     }
+
 
 
 
@@ -88,8 +91,6 @@
     }
 
 
-
-
     hashy.go = (hash) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash);
@@ -108,8 +109,6 @@
     }
 
 
-
-
     hashy.getHeight = (className) => {
       var element = document.querySelectorAll(className)[0];
       var height = window.getComputedStyle(element).height;
@@ -121,10 +120,10 @@
 
     hashy.scrollTo = (elem, hash) => {
       cancelAnimationFrame(hashy.runtime);
-      if (elem.offsetTop < (this.globalOffset * -1)) {
+      if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
         var elemPos = elem.offsetTop + 1 ;
       } else {
-        var elemPos = elem.offsetTop + 1 + this.globalOffset;
+        var elemPos = elem.offsetTop + 1 + hashy.GlobalOffset;
       }
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
@@ -153,16 +152,16 @@
         var diff = i - y;
         var scrollMinus = () => {
         if(i > y){
-            i = i - diff/this.averageSpeed;
-            document.body.scrollTop = i;
-            document.documentElement.scrollTop = i;
+          i = i - diff/this.averageSpeed;
+          document.body.scrollTop = i;
+          document.documentElement.scrollTop = i;
         } else{
-            document.documentElement.scrollTop = elemPos;
-            document.body.scrollTop = elemPos;
-            hashy.scrollOffset = elemPos;
-            clearInterval(interval);
-            hashy.checkElem();
-            hashy.setHash(hash);
+          document.documentElement.scrollTop = elemPos;
+          document.body.scrollTop = elemPos;
+          hashy.scrollOffset = elemPos;
+          clearInterval(interval);
+          hashy.checkElem();
+          hashy.setHash(hash);
           }
         }
 
@@ -174,10 +173,8 @@
 
     hashy.init = () => {
       hashy.checkElem()
-      hashy.bind(this.triggerElems)
+      hashy.bind(hashy.TriggerElems)
     }
-
-
 
 
     // ===========================================================================
@@ -185,26 +182,26 @@
     // ===========================================================================
 
     //  Raf runtime
-    this.runtime = function(){};
+    hashy.runtime = function(){};
 
 
     //  All hashy elems
-    this.elems = [].slice.call(document.querySelectorAll(this.itemClass));
+    hashy.Elems = [].slice.call(document.querySelectorAll(this.itemClass));
 
     //  All hashy triggers
-    this.triggerElems = document.querySelectorAll(this.triggerClass);
+    hashy.TriggerElems = document.querySelectorAll(this.triggerClass);
     // Set inenr scrolling to 0
-    this.scrollOffset = 0;
+    hashy.ScrollOffset = 0;
     // no selectedElem
-    var selectedElem = null;
+    hashy.SelectedElem = null;
 
 
     // checks if offset is class and set value
-    this.globalOffset = hashy.checkOffset(this.offset);
+    hashy.GlobalOffset = hashy.checkOffset(this.offset);
     // Repeat the check after resize
     var resizeTimeout;
     hashy.doneResize = () => {
-      this.globalOffset = hashy.checkOffset(this.offset);
+      hashy.GlobalOffset = hashy.checkOffset(this.offset);
       this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
     window.onresize = function(){
@@ -225,8 +222,8 @@
     if(window.location.hash.length && window.location.hash != 'undefined'){
       let cleanHash = window.location.hash.replace('#', '');
       let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
-      document.documentElement.scrollTop = elem.offsetTop + this.globalOffset;
-      document.body.scrollTop = elem.offsetTop + this.globalOffset;
+      document.documentElement.scrollTop = elem.offsetTop + hashy.GlobalOffset;
+      document.body.scrollTop = elem.offsetTop + hashy.GlobalOffset;
       this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
 
@@ -238,10 +235,6 @@
 
     // Closing hashy
   };
-
-
-
-
 
   window.hashy = hashy;
 }())
