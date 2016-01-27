@@ -30,8 +30,7 @@
         getPosition = () => {
 
           this.scrollOffset = window.pageYOffset || window.scrollTop;
-
-          if (this.scrollOffset === undefined) {
+          if (this.scrollOffset == null) {
             this.scrollOffset = 0;
           };
 
@@ -39,9 +38,9 @@
           var elemArray = Array.from(this.elems);
 
           elemArray.forEach( (elem) => {
-            var elemOffset = Math.abs(elem.offsetTop);
+            var elemOffset = elem.offsetTop + this.globalOffset;
             var elemHeight = elem.offsetHeight || elem.clientHeight;
-            var height = window.innerHeight||document.documentElement.clientHeight;
+            var height = window.innerHeight || document.documentElement.clientHeight;
             if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
               if (elem !== selectedElem ) {
                 selectedElem = elem;
@@ -91,6 +90,18 @@
       hashy.setHash(hash);
     }
 
+
+    hashy.checkOffset = (offset) => {
+      // offset is a string, so we get the height of the matchingitem
+      if (typeof offset == 'string') {
+        var calcOffset = hashy.getHeight(offset);
+      } else {
+        var calcOffset = offset;
+      }
+      calcOffset = calcOffset * -1;
+      return calcOffset;
+    }
+
     hashy.getHeight = (className) => {
       var elmHeight, elmMargin, elm = document.querySelectorAll(className)[0];
       if(document.all) {
@@ -107,14 +118,14 @@
       return (elmHeight+elmMargin);
     }
 
+
     hashy.scrollTo = (elem, hash) => {
       cancelAnimationFrame(hashy.runtime);
-      if (typeof this.offset == 'string') {
-        var offset = hashy.getHeight(this.offset) * -1;
+      if (elem.offsetTop < (this.globalOffset * -1)) {
+        var elemPos = elem.offsetTop + 1 ;
       } else {
-        var offset = this.offset * -1;
+        var elemPos = elem.offsetTop + 1 + this.globalOffset;
       }
-      let elemPos = Math.abs(elem.offsetTop) + 1 + (offset);
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
         var y = elemPos;
@@ -162,29 +173,6 @@
 
 
 
-    // ===========================================================================
-    // On pageload:
-    // Look for valid location hash and scroll to position via scrollIntoView
-    // ===========================================================================
-
-    if(window.location.hash.length && window.location.hash != 'undefined'){
-      let cleanHash = window.location.hash.replace('#', '');
-      let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
-      elem.scrollIntoView()
-      var pos;
-      pos = document.body.scrollTop || document.documentElement.scrollTop;
-      if (typeof this.offset == 'string') {
-        var offset = hashy.getHeight(this.offset) * -1;
-      } else {
-        var offset = this.offset * -1;
-      }
-      document.body.scrollTop = pos + (offset);
-      document.documentElement.scrollTop =  pos + (offset);
-    }
-
-    // ===========================================================================
-
-
 
     // ===========================================================================
     // init global vars
@@ -201,12 +189,42 @@
     // no selectedElem
     var selectedElem = null;
 
-    // Starting the magic
-    hashy.init()
+
+    // checks if offset is class and set value
+    this.globalOffset = hashy.checkOffset(this.offset);
+    // Repeat the check after resize
+    var resizeTimeout;
+    hashy.doneResize = () => {
+      this.globalOffset = hashy.checkOffset(this.offset);
+      console.log(this.globalOffset);
+    }
+    window.onresize = function(){
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(hashy.doneResize, 100);
+    };
+
 
     // ===========================================================================
     // Finish init global vars
     // ===========================================================================
+
+    // ===========================================================================
+    // On pageload:
+    // Look for valid location hash and scroll to position via scrollIntoView
+    // ===========================================================================
+
+    if(window.location.hash.length && window.location.hash != 'undefined'){
+      let cleanHash = window.location.hash.replace('#', '');
+      let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
+      document.documentElement.scrollTop = elem.offsetTop + this.offset;
+      document.body.scrollTop = elem.offsetTop + this.globalOffset;
+    }
+
+    // ===========================================================================
+
+
+    // Starting the magic
+    hashy.init()
 
     // Closing hashy
   };
