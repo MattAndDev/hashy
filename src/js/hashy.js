@@ -196,6 +196,7 @@
     var resizeTimeout;
     hashy.doneResize = () => {
       this.globalOffset = hashy.checkOffset(this.offset);
+      this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
     window.onresize = function(){
       clearTimeout(resizeTimeout);
