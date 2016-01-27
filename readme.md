@@ -5,6 +5,7 @@
 One pager hash navigation script.<br>
 Uses Raf to make your one page navigation smooth, performant and precise.
 
+Take a look at the [test page](http://mattanddev.github.io/hashy)
 
 ## Usage
 
