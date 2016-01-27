@@ -65,9 +65,11 @@
 
     hashy.setHash = (hash) => {
       if (window.location.hash !== hash) {
-        window.location.hash = hash;
-      } else {
-        return false;
+        if (window.history == null){
+          history.pushState({}, window.location, hash);
+        }else {
+          window.location.hash = hash;
+        }
       }
     }
 
@@ -90,13 +92,11 @@
       }
     }
 
-
     hashy.go = (hash) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash);
       hashy.setHash(hash);
     }
-
 
     hashy.checkOffset = (offset) => {
       if (typeof offset == 'string') {
@@ -117,11 +117,6 @@
       return height;
     }
 
-    hashy.writeHistory = (hash) => {
-      if (window.history == null){
-        return;
-      }
-    }
     hashy.scrollTo = (elem, hash) => {
       cancelAnimationFrame(hashy.runtime);
       if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
@@ -145,7 +140,6 @@
             clearInterval(interval);
             hashy.checkElem();
             hashy.setHash(hash);
-            hashy.writeHistory(hash);
           }
         }
 
@@ -167,13 +161,11 @@
           clearInterval(interval);
           hashy.checkElem();
           hashy.setHash(hash);
-          hashy.writeHistory(hash);
           }
         }
 
         var interval = setInterval(scrollMinus, 1);
       };
-      hashy.writeHistory();
     }
 
 
