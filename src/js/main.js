@@ -8,5 +8,7 @@ import hashy from 'hashy';
 // svg4everybody();
 
 $(() => {
-  var hash = new hashy();
+  var hash = new hashy({
+    offset: '.header'
+  });
 });

@@ -93,7 +93,6 @@
 
     hashy.getHeight = (className) => {
       var elmHeight, elmMargin, elm = document.querySelectorAll(className)[0];
-      console.log(elm);
       if(document.all) {
         elmHeight = elm.currentStyle.height;
         elmMargin = parseInt(elm.currentStyle.marginTop, 10) + parseInt(elm.currentStyle.marginBottom, 10);
@@ -105,7 +104,6 @@
         elmHeight = elmHeight.replace('px','');
         elmHeight = parseInt(elmHeight);
       }
-      console.log(elmHeight+elmMargin);
       return (elmHeight+elmMargin);
     }
 
@@ -175,9 +173,13 @@
       elem.scrollIntoView()
       var pos;
       pos = document.body.scrollTop || document.documentElement.scrollTop;
-      document.body.scrollTop = pos + (this.offset);
-      document.documentElement.scrollTop =  pos + (this.offset);
-      console.log(document.body.scrollTop);
+      if (typeof this.offset == 'string') {
+        var offset = hashy.getHeight(this.offset) * -1;
+      } else {
+        var offset = this.offset * -1;
+      }
+      document.body.scrollTop = pos + (offset);
+      document.documentElement.scrollTop =  pos + (offset);
     }
 
     // ===========================================================================
