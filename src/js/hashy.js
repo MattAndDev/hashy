@@ -24,8 +24,7 @@
 
 
       var scrollPos = () => {
-        var getPosition, scrollOffset;
-        scrollOffset = 0;
+        var getPosition;
 
         getPosition = () => {
 
@@ -70,6 +69,8 @@
       }
     }
 
+
+
     hashy.bind = (elems) => {
       for(var i =0; i < elems.length; i++){
           var elem = elems[i];
@@ -86,6 +87,9 @@
       }
     }
 
+
+
+
     hashy.go = (hash) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash);
@@ -94,7 +98,6 @@
 
 
     hashy.checkOffset = (offset) => {
-      // offset is a string, so we get the height of the matchingitem
       if (typeof offset == 'string') {
         var calcOffset = hashy.getHeight(offset);
       } else {
@@ -103,6 +106,9 @@
       calcOffset = calcOffset * -1;
       return calcOffset;
     }
+
+
+
 
     hashy.getHeight = (className) => {
       var element = document.querySelectorAll(className)[0];
@@ -130,9 +136,12 @@
             document.body.scrollTop = i;
             document.documentElement.scrollTop = i;
           } else{
-           clearInterval(interval);
-           hashy.checkElem();
-           hashy.setHash(hash);
+            document.documentElement.scrollTop = elemPos;
+            document.body.scrollTop = elemPos;
+            hashy.scrollOffset = elemPos;
+            clearInterval(interval);
+            hashy.checkElem();
+            hashy.setHash(hash);
           }
         }
 
@@ -143,14 +152,17 @@
         var y = elemPos;
         var diff = i - y;
         var scrollMinus = () => {
-          if(i > y){
+        if(i > y){
             i = i - diff/this.averageSpeed;
             document.body.scrollTop = i;
             document.documentElement.scrollTop = i;
-          } else{
-           clearInterval(interval);
-           hashy.checkElem();
-           hashy.setHash(hash);
+        } else{
+            document.documentElement.scrollTop = elemPos;
+            document.body.scrollTop = elemPos;
+            hashy.scrollOffset = elemPos;
+            clearInterval(interval);
+            hashy.checkElem();
+            hashy.setHash(hash);
           }
         }
 
