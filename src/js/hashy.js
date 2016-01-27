@@ -11,6 +11,8 @@
       options = {};
     };
 
+
+    // TODO: addoption for data title _> push state
     this.itemClass = options.itemClass || '.hashy-item';
     this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
@@ -64,12 +66,16 @@
 
 
     hashy.setHash = (hash) => {
-      if (window.location.hash !== hash) {
-        if (window.history == null){
-          history.pushState({}, window.location, hash);
-        }else {
-          window.location.hash = hash;
-        }
+      if (hashy.history &&  hashy.Hash !== hash){
+
+
+        // TODO: this should be treiggered only scrolling down!!
+        console.log('change');
+        hashy.Hash = hash;
+        hashy.history.pushState({scrollTop: hashy.ScrollOffset}, null, hash);
+      } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash) {
+        hashy.Hash = hash;
+        // window.location.hash = hash;
       }
     }
 
@@ -172,6 +178,9 @@
     hashy.init = () => {
       hashy.checkElem()
       hashy.bind(hashy.TriggerElems)
+      if (window.history){
+       hashy.history = window.history;
+      }
     }
 
 
@@ -182,6 +191,7 @@
     //  Raf runtime
     hashy.runtime = function(){};
 
+    hashy.Hash = null;
 
     //  All hashy elems
     hashy.Elems = [].slice.call(document.querySelectorAll(this.itemClass));
