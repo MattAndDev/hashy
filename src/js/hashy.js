@@ -154,6 +154,11 @@
       let cleanHash = window.location.hash.replace('#', '');
       let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
       elem.scrollIntoView()
+      var pos;
+      pos = document.body.scrollTop || document.documentElement.scrollTop;
+      document.body.scrollTop = pos + (this.offset);
+      document.documentElement.scrollTop =  pos + (this.offset);
+      console.log(document.body.scrollTop);
     }
 
     // ===========================================================================
