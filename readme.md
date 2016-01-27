@@ -52,7 +52,7 @@ You can override the previous defaults like this:
 import hashy from 'hashy';
 
 var hash = new hashy({
-  offset :        10,                  // integer - default is 0
+  offset :        '.my-header',        // integer or classname  - default is 0
   averageSpeed :  10,                  // integer - default is 100
   itemClass :     '.item-class',       // class selector -  default is '.hashy-item'
   itemAttr :      'data-name',         // valid attribute - default is 'data-hash'
