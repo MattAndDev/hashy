@@ -15,7 +15,7 @@
     this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
-    this.averageSpeed = options.averageSpeed || 200
+    this.averageSpeed = options.averageSpeed || 100
     this.offset = options.offset || 0
 
 
@@ -91,12 +91,32 @@
       hashy.setHash(hash);
     }
 
+    hashy.getHeight = (className) => {
+      var elmHeight, elmMargin, elm = document.querySelectorAll(className)[0];
+      console.log(elm);
+      if(document.all) {
+        elmHeight = elm.currentStyle.height;
+        elmMargin = parseInt(elm.currentStyle.marginTop, 10) + parseInt(elm.currentStyle.marginBottom, 10);
+        elmHeight = elmHeight.replace('px','');
+        elmHeight = parseInt(elmHeight);
+      } else {
+        elmHeight = document.defaultView.getComputedStyle(elm, '').getPropertyValue('height');
+        elmMargin = parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-bottom'));
+        elmHeight = elmHeight.replace('px','');
+        elmHeight = parseInt(elmHeight);
+      }
+      console.log(elmHeight+elmMargin);
+      return (elmHeight+elmMargin);
+    }
+
     hashy.scrollTo = (elem, hash) => {
-
       cancelAnimationFrame(hashy.runtime);
-      console.log(this.averageSpeed);
-      let elemPos = Math.abs(elem.offsetTop) + 1 + (this.offset);
-
+      if (typeof this.offset == 'string') {
+        var offset = hashy.getHeight(this.offset) * -1;
+      } else {
+        var offset = this.offset * -1;
+      }
+      let elemPos = Math.abs(elem.offsetTop) + 1 + (offset);
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
         var y = elemPos;

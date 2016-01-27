@@ -7,3 +7,14 @@
   background: $color-bg
   border-bottom: 1px solid black
   +pos(0,top right left , fixed)
+  +mq($bp-md)
+    line-height: 150px
+    height: 150px
+
+.header_title
+  span
+    color: $primary
+  +mq($bp-md)
+    float: left
+    display: inline-block
+    line-height: 150px
