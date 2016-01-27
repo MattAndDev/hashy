@@ -15,9 +15,8 @@
     this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
-    this.averageSpeed = options.averageSpeed || 100
-    this.offset = options.offset || - 233
-
+    this.averageSpeed = options.averageSpeed || 200
+    this.offset = options.offset || 0
 
 
 
@@ -118,7 +117,7 @@
 
       } else {
         var i = this.scrollOffset;
-        var y = elemPos + (this.offset);
+        var y = elemPos;
         var diff = i - y;
         var scrollMinus = () => {
           if(i > y){
