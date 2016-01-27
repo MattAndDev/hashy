@@ -30,7 +30,7 @@ The markup should then look like this:
 
 
 <!--
-hashy looks for links with .hashy-item class
+hashy looks for elems with .hashy-item class
 and uses the data hash attribute for hash value
 -->
 <section class="hashy-item" data-hash="one">
@@ -52,11 +52,19 @@ You can override the previous defaults like this:
 import hashy from 'hashy';
 
 var hash = new hashy({
-  averageSpeed :  10,                   // default is 100
-  itemClass :     '.item-class',       // default is '.hashy-item'
-  itemAttr :      'data-name',         // default is 'data-hash'
-  triggerClass :  '.scroll-anchor',    // default is '.hashy-go'
-  triggerAttr :   'data-name'          // default is 'href'
+  averageSpeed :  10,                  // integer - default is 100
+  itemClass :     '.item-class',       // class selector -  default is '.hashy-item'
+  itemAttr :      'data-name',         // valid attribute - default is 'data-hash'
+  triggerClass :  '.scroll-anchor',    // class selector - default is '.hashy-go'
+  triggerAttr :   'data-name'          // valid attribute - default is 'href'
 });
 
 ```
+
+
+## Notes
+
+```averageSpeed``` is an interpolated variable, used to interpolate distances.
+The bigger the value the slower the scrolling will be, note that hashy takes care of scrolling faster to more distant items.
+
+```Raf``` needs to be available in the browser.
