@@ -11,8 +11,8 @@
       options = {};
     };
 
-    this.elemClass = options.class || '.hashy-item';
-    this.dataAttr = options.data || 'data-hash'
+    this.itemClass = options.itemClass || '.hashy-item';
+    this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
     this.averageSpeed = options.averageSpeed || 100
@@ -45,7 +45,7 @@
             if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
               if (elem !== selectedElem ) {
                 selectedElem = elem;
-                hashy.setHash(selectedElem.getAttribute(this  .dataAttr));
+                hashy.setHash(selectedElem.getAttribute(this.dataAttr));
               };
             }
           });
@@ -166,7 +166,7 @@
     //  Raf runtime
     this.runtime = function(){};
     //  All hashy elems
-    this.elems = document.querySelectorAll(this.elemClass);
+    this.elems = document.querySelectorAll(this.itemClass);
     //  All hashy triggers
     this.triggerElems = document.querySelectorAll(this.triggerClass);
     // Set inenr scrolling to 0

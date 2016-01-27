@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 // Shimmed plugin example
-import hashyaa from 'hashy';
+import hashy from 'hashy';
 
 // Enable inline svgs in IE
 // import svg4everybody from 'svg4everybody';
