@@ -16,6 +16,7 @@
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
     this.averageSpeed = options.averageSpeed || 100
+    this.offset = options.offset || 0
 
 
 
@@ -45,7 +46,7 @@
             if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
               if (elem !== selectedElem ) {
                 selectedElem = elem;
-                hashy.setHash(selectedElem.getAttribute(this.dataAttr));
+                hashy.setHash(selectedElem.getAttribute(this.itemAttr));
               };
             }
           });
@@ -86,7 +87,7 @@
     }
 
     hashy.go = (hash) => {
-      let elem = document.querySelector('[' + this.dataAttr + '="' + hash + '"]');
+      let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash);
       hashy.setHash(hash);
     }
@@ -151,7 +152,7 @@
 
     if(window.location.hash.length && window.location.hash != 'undefined'){
       let cleanHash = window.location.hash.replace('#', '');
-      let elem = document.querySelector('[' + this.dataAttr + '="' + cleanHash + '"]');
+      let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
       elem.scrollIntoView()
     }
 

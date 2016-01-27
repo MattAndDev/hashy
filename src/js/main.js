@@ -8,7 +8,5 @@ import hashy from 'hashy';
 // svg4everybody();
 
 $(() => {
-  var hash = new hashy({
-    triggerAttr: 'data-go'
-  });
+  var hash = new hashy();
 });
