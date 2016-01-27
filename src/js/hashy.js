@@ -35,7 +35,8 @@
           };
 
 
-          var elemArray = Array.from(this.elems);
+          var elemArray = this.elems;
+
 
           elemArray.forEach( (elem) => {
             var elemOffset = elem.offsetTop + this.globalOffset;
@@ -78,6 +79,7 @@
             var attr = href;
           }
           elem.onclick = function(e){
+            e.preventDefault ? e.preventDefault() : (e.returnValue = false);
             e.preventDefault();
             hashy.go(e.target.getAttribute(attr))
           };
@@ -103,19 +105,11 @@
     }
 
     hashy.getHeight = (className) => {
-      var elmHeight, elmMargin, elm = document.querySelectorAll(className)[0];
-      if(document.all) {
-        elmHeight = elm.currentStyle.height;
-        elmMargin = parseInt(elm.currentStyle.marginTop, 10) + parseInt(elm.currentStyle.marginBottom, 10);
-        elmHeight = elmHeight.replace('px','');
-        elmHeight = parseInt(elmHeight);
-      } else {
-        elmHeight = document.defaultView.getComputedStyle(elm, '').getPropertyValue('height');
-        elmMargin = parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-bottom'));
-        elmHeight = elmHeight.replace('px','');
-        elmHeight = parseInt(elmHeight);
-      }
-      return (elmHeight+elmMargin);
+      var element = document.querySelectorAll(className)[0];
+      var height = window.getComputedStyle(element).height;
+      height = height.replace('px');
+      height = parseInt(height);
+      return height;
     }
 
 
@@ -180,8 +174,11 @@
 
     //  Raf runtime
     this.runtime = function(){};
+
+
     //  All hashy elems
-    this.elems = document.querySelectorAll(this.itemClass);
+    this.elems = [].slice.call(document.querySelectorAll(this.itemClass));
+
     //  All hashy triggers
     this.triggerElems = document.querySelectorAll(this.triggerClass);
     // Set inenr scrolling to 0
@@ -218,6 +215,7 @@
       let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
       document.documentElement.scrollTop = elem.offsetTop + this.globalOffset;
       document.body.scrollTop = elem.offsetTop + this.globalOffset;
+      this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
 
     // ===========================================================================
