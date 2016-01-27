@@ -117,7 +117,11 @@
       return height;
     }
 
-
+    hashy.writeHistory = (hash) => {
+      if (window.history == null){
+        return;
+      }
+    }
     hashy.scrollTo = (elem, hash) => {
       cancelAnimationFrame(hashy.runtime);
       if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
@@ -141,6 +145,7 @@
             clearInterval(interval);
             hashy.checkElem();
             hashy.setHash(hash);
+            hashy.writeHistory(hash);
           }
         }
 
@@ -162,12 +167,13 @@
           clearInterval(interval);
           hashy.checkElem();
           hashy.setHash(hash);
+          hashy.writeHistory(hash);
           }
         }
 
         var interval = setInterval(scrollMinus, 1);
       };
-
+      hashy.writeHistory();
     }
 
 
