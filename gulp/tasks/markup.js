@@ -14,7 +14,6 @@ gulp.task('markup', function() {
     }))
     .pipe(rename({extname: ""}))
     .pipe(rename({extname: ".html"}))
-    .pipe(minifyHTML({spare: true}))
     .pipe(gulp.dest(config.dest))
     .pipe(browserSync.reload({stream:true}));
 });
