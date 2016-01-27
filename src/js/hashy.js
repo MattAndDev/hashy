@@ -16,7 +16,7 @@
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
     this.averageSpeed = options.averageSpeed || 100
-    this.offset = options.offset || 0
+    this.offset = options.offset || - 233
 
 
 
@@ -96,7 +96,7 @@
 
       cancelAnimationFrame(hashy.runtime);
       console.log(this.averageSpeed);
-      let elemPos = Math.abs(elem.offsetTop) + 1;
+      let elemPos = Math.abs(elem.offsetTop) + 1 + (this.offset);
 
       if (elemPos > this.scrollOffset) {
         var i = this.scrollOffset;
@@ -118,7 +118,7 @@
 
       } else {
         var i = this.scrollOffset;
-        var y = elemPos;
+        var y = elemPos + (this.offset);
         var diff = i - y;
         var scrollMinus = () => {
           if(i > y){
