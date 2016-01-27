@@ -1,7 +1,3 @@
-[submodule "test/hashy"]
-	path = test/hashy
-	url = git@github.com:MattAndDev/hashy.git
-	branch = gh-pages
 [submodule "test"]
 	path = test
 	url = git@github.com:MattAndDev/hashy.git
