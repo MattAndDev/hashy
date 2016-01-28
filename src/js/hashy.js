@@ -30,9 +30,9 @@
 
         getPosition = () => {
 
-          this.scrollOffset = window.pageYOffset || window.scrollTop;
-          if (this.scrollOffset == null) {
-            this.scrollOffset = 0;
+          hashy.ScrollOffset = window.pageYOffset || window.scrollTop;
+          if (hashy.ScrollOffset == null) {
+            hashy.ScrollOffset = 0;
           };
 
 
@@ -43,10 +43,15 @@
             var elemOffset = elem.offsetTop + hashy.GlobalOffset;
             var elemHeight = elem.offsetHeight || elem.clientHeight;
             var height = window.innerHeight || document.documentElement.clientHeight;
-            if (this.scrollOffset + height > elemOffset && this.scrollOffset > elemOffset && this.scrollOffset < elemOffset + elemHeight ) {
+            if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
               if (elem !== hashy.SelectedElem ) {
-                hashy.selectedElem = elem;
-                hashy.setHash(hashy.selectedElem.getAttribute(this.itemAttr));
+                if (hashy.Elems.indexOf(hashy.SelectedElem) < hashy.Elems.indexOf(elem)) {
+                  var down = true
+                } else {
+                  var down = false
+                }
+                hashy.SelectedElem = elem;
+                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr), down);
               };
             }
           });
@@ -65,12 +70,10 @@
 
 
 
-    hashy.setHash = (hash) => {
+    hashy.setHash = (hash, down) => {
       if (hashy.history &&  hashy.Hash !== hash){
-
-
+        console.log('called');
         // TODO: this should be treiggered only scrolling down!!
-        console.log('change');
         hashy.Hash = hash;
         hashy.history.pushState({scrollTop: hashy.ScrollOffset}, null, hash);
       } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash) {
@@ -130,8 +133,8 @@
       } else {
         var elemPos = elem.offsetTop + 1 + hashy.GlobalOffset;
       }
-      if (elemPos > this.scrollOffset) {
-        var i = this.scrollOffset;
+      if (elemPos > hashy.ScrollOffset) {
+        var i = hashy.ScrollOffset;
         var y = elemPos;
         var diff = y -i;
         var scrollPlus = () => {
@@ -152,7 +155,7 @@
         var interval = setInterval(scrollPlus, 1);
 
       } else {
-        var i = this.scrollOffset;
+        var i = hashy.ScrollOffset;
         var y = elemPos;
         var diff = i - y;
         var scrollMinus = () => {
@@ -210,7 +213,7 @@
     var resizeTimeout;
     hashy.doneResize = () => {
       hashy.GlobalOffset = hashy.checkOffset(this.offset);
-      this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
+      hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
     window.onresize = function(){
       clearTimeout(resizeTimeout);
@@ -232,10 +235,10 @@
       let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
       document.documentElement.scrollTop = elem.offsetTop + hashy.GlobalOffset;
       document.body.scrollTop = elem.offsetTop + hashy.GlobalOffset;
-      this.scrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
+      hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
 
-    // ===========================================================================
+  // ===========================================================================
 
 
     // raf polifill
