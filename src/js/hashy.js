@@ -45,13 +45,8 @@
             var height = window.innerHeight || document.documentElement.clientHeight;
             if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
               if (elem !== hashy.SelectedElem ) {
-                if (hashy.Elems.indexOf(hashy.SelectedElem) < hashy.Elems.indexOf(elem)) {
-                  var down = true
-                } else {
-                  var down = false
-                }
                 hashy.SelectedElem = elem;
-                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr), down);
+                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr), elem.offsetTop);
               };
             }
           });
@@ -70,12 +65,14 @@
 
 
 
-    hashy.setHash = (hash, down) => {
+    hashy.setHash = (hash, pos) => {
       if (hashy.history &&  hashy.Hash !== hash){
-        console.log('called');
+        // console.log('called');
+        // console.log(pos);
         // TODO: this should be treiggered only scrolling down!!
+        console.log('pushState');
         hashy.Hash = hash;
-        hashy.history.pushState({scrollTop: hashy.ScrollOffset}, null, hash);
+        hashy.history.pushState({scrollTop: pos}, null, hash);
       } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash) {
         hashy.Hash = hash;
         // window.location.hash = hash;
@@ -219,6 +216,18 @@
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(hashy.doneResize, 100);
     };
+    window.onpopstate = (event) => {
+      // console.log(event);
+      // console.log(event.state);
+      event.preventDefault();
+      cancelAnimationFrame(hashy.runtime);
+      if (event.state == null) {
+        event.state.scrollTop = 0;
+      }
+      window.scrollTop = event.state.scrollTop;
+      window.pageYOffset = event.state.scrollTop;
+      setTimeout(()=>{hashy.checkElem();},100)
+    }
 
 
     // ===========================================================================
