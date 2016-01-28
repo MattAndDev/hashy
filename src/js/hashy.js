@@ -12,7 +12,6 @@
     };
 
 
-    // TODO: addoption for data title _> push state
     this.itemClass = options.itemClass || '.hashy-item';
     this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
@@ -20,7 +19,8 @@
     this.averageSpeed = options.averageSpeed || 100
     this.offset = options.offset || 0
 
-
+    // TODO: add option to activate pushstate
+    // TODO: addoption for data title _> push state
 
     hashy.checkElem = () =>{
 
@@ -64,13 +64,10 @@
     }
 
 
+    // TODO: refactor this to accept option for pushState
 
     hashy.setHash = (hash, pos) => {
       if (hashy.history &&  hashy.Hash !== hash){
-        // console.log('called');
-        // console.log(pos);
-        // TODO: this should be treiggered only scrolling down!!
-        console.log('pushState');
         hashy.Hash = hash;
         hashy.history.pushState({scrollTop: pos}, null, hash);
       } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash) {
@@ -212,13 +209,17 @@
       hashy.GlobalOffset = hashy.checkOffset(this.offset);
       hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
+
+
+    // TODO: refactor this to be event listener?
+
     window.onresize = function(){
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(hashy.doneResize, 100);
     };
+
+
     window.onpopstate = (event) => {
-      // console.log(event);
-      // console.log(event.state);
       event.preventDefault();
       cancelAnimationFrame(hashy.runtime);
       if (event.state == null) {
