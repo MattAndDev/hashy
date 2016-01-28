@@ -64,10 +64,6 @@
     }
 
 
-
-
-
-
     hashy.bind = (elems) => {
       for(var i =0; i < elems.length; i++){
           var elem = elems[i];
@@ -84,29 +80,32 @@
       }
     }
 
-
-    // TODO: refactor this to accept option for pushState
-
-    hashy.setHash = (hash, history, callback) => {
-      if (hashy.history &&  hashy.Hash !== hash && history === true){
-        console.log('push');
-        hashy.history.pushState({ hash: hash}, null, '#' + hash);
-        hashy.Hash = hash;
-        callback;
-      } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash && history != true) {
-        hashy.Hash = hash;
-        callback;
-        // window.location.hash = hash;
-      }
-    }
-
     hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
         hashy.setHash(hash,history, () => {
+          console.log('reinit');
           hashy.checkElem();
         });
       });
+    }
+
+
+    hashy.setHash = (hash, history, callback) => {
+      if (hashy.history &&  history === true && hashy.Hash != hash || hashy.history &&  history === true && hashy.Hash == null ){
+        console.log('push');
+        hashy.history.pushState({ hash: hash}, null, '#' + hash);
+        hashy.Hash = hash;
+        if (callback) {
+          callback();
+        }
+      } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash && !hashy.history) {
+        hashy.Hash = hash;
+        window.location.hash = hash;
+        if (callback) {
+          callback();
+        }
+      }
     }
 
     hashy.checkOffset = (offset) => {
@@ -118,7 +117,6 @@
       calcOffset = calcOffset * -1;
       return calcOffset;
     }
-
 
     hashy.getHeight = (className) => {
       var element = document.querySelectorAll(className)[0];
@@ -209,6 +207,8 @@
 
     // checks if offset is class and set value
     hashy.GlobalOffset = hashy.checkOffset(this.offset);
+
+
     // Repeat the check after resize
     var resizeTimeout;
     hashy.doneResize = () => {
@@ -216,9 +216,7 @@
       hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
     }
 
-
     // TODO: refactor this to be event listener?
-
     window.onresize = function(){
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(hashy.doneResize, 100);
@@ -227,8 +225,13 @@
 
     window.onpopstate = (event) => {
       event.preventDefault();
-      console.log(event.state.hash);
-      hashy.go(event.state.hash,false);
+      if (event.state != null) {
+        hashy.go(event.state.hash,false);
+      }else {
+        let cleanHash = window.location.hash.replace('#', '');
+        hashy.go(cleanHash,true);
+      }
+      return false;
     }
 
 
@@ -243,19 +246,14 @@
 
     // ===========================================================================
     // On pageload:
-    // Look for valid location hash and scroll to position via scrollIntoView
     // ===========================================================================
 
     if(window.location.hash.length && window.location.hash != 'undefined'){
       let cleanHash = window.location.hash.replace('#', '');
-      let elem = document.querySelector('[' + this.itemAttr + '="' + cleanHash + '"]');
-      document.documentElement.scrollTop = elem.offsetTop + hashy.GlobalOffset;
-      document.body.scrollTop = elem.offsetTop + hashy.GlobalOffset;
-      hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
-      hashy.setHash(cleanHash);
       if (window.history){
-       hashy.history = window.history;
+        hashy.history = window.history;
       }
+      hashy.go(cleanHash,false);
     }
 
   // ===========================================================================
