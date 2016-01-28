@@ -46,7 +46,7 @@
             if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
               if (elem !== hashy.SelectedElem ) {
                 hashy.SelectedElem = elem;
-                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr), elem.offsetTop);
+                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
               };
             }
           });
@@ -64,17 +64,6 @@
     }
 
 
-    // TODO: refactor this to accept option for pushState
-
-    hashy.setHash = (hash, pos) => {
-      if (hashy.history &&  hashy.Hash !== hash){
-        hashy.Hash = hash;
-        hashy.history.pushState({scrollTop: pos}, null, hash);
-      } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash) {
-        hashy.Hash = hash;
-        // window.location.hash = hash;
-      }
-    }
 
 
 
@@ -90,15 +79,34 @@
           elem.onclick = function(e){
             e.preventDefault ? e.preventDefault() : (e.returnValue = false);
             e.preventDefault();
-            hashy.go(e.target.getAttribute(attr))
+            hashy.go(e.target.getAttribute(attr),true)
           };
       }
     }
 
-    hashy.go = (hash) => {
+
+    // TODO: refactor this to accept option for pushState
+
+    hashy.setHash = (hash, history, callback) => {
+      if (hashy.history &&  hashy.Hash !== hash && history === true){
+        console.log('push');
+        hashy.history.pushState({ hash: hash}, null, '#' + hash);
+        hashy.Hash = hash;
+        callback;
+      } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash && history != true) {
+        hashy.Hash = hash;
+        callback;
+        // window.location.hash = hash;
+      }
+    }
+
+    hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
-      hashy.scrollTo(elem, hash);
-      hashy.setHash(hash);
+      hashy.scrollTo(elem, hash, () => {
+        hashy.setHash(hash,history, () => {
+          hashy.checkElem();
+        });
+      });
     }
 
     hashy.checkOffset = (offset) => {
@@ -120,7 +128,7 @@
       return height;
     }
 
-    hashy.scrollTo = (elem, hash) => {
+    hashy.scrollTo = (elem, hash, callback) => {
       cancelAnimationFrame(hashy.runtime);
       if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
         var elemPos = elem.offsetTop + 1 ;
@@ -139,10 +147,9 @@
           } else{
             document.documentElement.scrollTop = elemPos;
             document.body.scrollTop = elemPos;
-            hashy.scrollOffset = elemPos;
+            hashy.ScrollOffset = elemPos;
             clearInterval(interval);
-            hashy.checkElem();
-            hashy.setHash(hash);
+            callback();
           }
         }
 
@@ -160,10 +167,9 @@
         } else{
           document.documentElement.scrollTop = elemPos;
           document.body.scrollTop = elemPos;
-          hashy.scrollOffset = elemPos;
+          hashy.ScrollOffset = elemPos;
           clearInterval(interval);
-          hashy.checkElem();
-          hashy.setHash(hash);
+          callback();
           }
         }
 
@@ -175,7 +181,7 @@
     hashy.init = () => {
       hashy.checkElem()
       hashy.bind(hashy.TriggerElems)
-      if (window.history){
+      if (!hashy.history){
        hashy.history = window.history;
       }
     }
@@ -221,13 +227,13 @@
 
     window.onpopstate = (event) => {
       event.preventDefault();
-      cancelAnimationFrame(hashy.runtime);
-      if (event.state == null) {
-        event.state.scrollTop = 0;
-      }
-      window.scrollTop = event.state.scrollTop;
-      window.pageYOffset = event.state.scrollTop;
-      setTimeout(()=>{hashy.checkElem();},100)
+      console.log(event.state.hash);
+      hashy.go(event.state.hash,false);
+    }
+
+
+    window.onhashchange = (event) => {
+      event.preventDefault();
     }
 
 
@@ -246,6 +252,10 @@
       document.documentElement.scrollTop = elem.offsetTop + hashy.GlobalOffset;
       document.body.scrollTop = elem.offsetTop + hashy.GlobalOffset;
       hashy.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop;
+      hashy.setHash(cleanHash);
+      if (window.history){
+       hashy.history = window.history;
+      }
     }
 
   // ===========================================================================
