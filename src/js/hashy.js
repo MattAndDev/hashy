@@ -44,6 +44,7 @@
             var elemHeight = elem.offsetHeight || elem.clientHeight;
             var height = window.innerHeight || document.documentElement.clientHeight;
             if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
+              // console.log(elem, hashy.SelectedElem);
               if (elem !== hashy.SelectedElem ) {
                 hashy.SelectedElem = elem;
                 hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
@@ -83,8 +84,8 @@
     hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
+        console.log('callback');
         hashy.setHash(hash,history, () => {
-          console.log('reinit');
           hashy.checkElem();
         });
       });
@@ -93,7 +94,7 @@
 
     hashy.setHash = (hash, history, callback) => {
       if (hashy.history &&  history === true && hashy.Hash != hash || hashy.history &&  history === true && hashy.Hash == null ){
-        console.log('push');
+        console.log('pushing to history');
         hashy.history.pushState({ hash: hash}, null, '#' + hash);
         hashy.Hash = hash;
         if (callback) {
@@ -105,6 +106,10 @@
         if (callback) {
           callback();
         }
+      } else  {
+        if (callback) {
+            callback();
+          }
       }
     }
 
@@ -146,6 +151,7 @@
             document.documentElement.scrollTop = elemPos;
             document.body.scrollTop = elemPos;
             hashy.ScrollOffset = elemPos;
+            hashy.SelectedElem = elem;
             clearInterval(interval);
             callback();
           }
@@ -166,6 +172,7 @@
           document.documentElement.scrollTop = elemPos;
           document.body.scrollTop = elemPos;
           hashy.ScrollOffset = elemPos;
+          hashy.SelectedElem = elem;
           clearInterval(interval);
           callback();
           }
@@ -177,7 +184,6 @@
 
 
     hashy.init = () => {
-      hashy.checkElem()
       hashy.bind(hashy.TriggerElems)
       if (!hashy.history){
        hashy.history = window.history;
@@ -229,7 +235,7 @@
         hashy.go(event.state.hash,false);
       }else {
         let cleanHash = window.location.hash.replace('#', '');
-        hashy.go(cleanHash,true);
+        hashy.go(cleanHash,false);
       }
       return false;
     }
