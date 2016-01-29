@@ -72,7 +72,7 @@
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
         hashy.setHash(hash,history, () => {
-          hashy.getPosition()
+          hashy.runtime = requestAnimationFrame(hashy.getPosition);
         });
       });
     }
@@ -177,9 +177,8 @@
         let cleanHash = window.location.hash.replace('#', '');
         hashy.go(cleanHash,false);
       }else {
-          hashy.getPosition();
+        hashy.runtime = requestAnimationFrame(hashy.getPosition);
       }
-      // hashy.checkElem();
     }
 
 
