@@ -72,7 +72,7 @@
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
         hashy.setHash(hash,history, () => {
-          // hashy.getPosition()
+          hashy.getPosition()
         });
       });
     }
@@ -113,6 +113,7 @@
 
     hashy.scrollTo = (elem, hash, callback) => {
       cancelAnimationFrame(hashy.runtime);
+      hashy.IsScrolling = true;
       if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
         var elemPos = elem.offsetTop + 1 ;
       } else {
@@ -133,6 +134,7 @@
             hashy.ScrollOffset = elemPos;
             hashy.SelectedElem = elem;
             clearInterval(interval);
+            hashy.IsScrolling = false;
             callback();
           }
         }
@@ -154,6 +156,7 @@
           hashy.ScrollOffset = elemPos;
           hashy.SelectedElem = elem;
           clearInterval(interval);
+          hashy.IsScrolling = false;
           callback();
           }
         }
@@ -187,18 +190,13 @@
 
     //  Raf runtime
     hashy.runtime = function(){};
-
     hashy.Hash = null;
-
-    //  All hashy elems
     hashy.Elems = [].slice.call(document.querySelectorAll(this.itemClass));
-
-    //  All hashy triggers
     hashy.TriggerElems = document.querySelectorAll(this.triggerClass);
-    // Set inenr scrolling to 0
     hashy.ScrollOffset = 0;
-    // no selectedElem
     hashy.SelectedElem = null;
+    hashy.IsScrolling = null;
+
 
 
     // checks if offset is class and set value
