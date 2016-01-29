@@ -19,50 +19,38 @@
     this.averageSpeed = options.averageSpeed || 100
     this.offset = options.offset || 0
 
-    // TODO: add option to activate pushstate
     // TODO: addoption for data title _> push state
 
-    hashy.checkElem = () =>{
 
 
-      var scrollPos = () => {
-        var getPosition;
 
-        getPosition = () => {
-
-          hashy.ScrollOffset = window.pageYOffset || window.scrollTop;
-          if (hashy.ScrollOffset == null) {
-            hashy.ScrollOffset = 0;
-          };
-
-
-          var elemArray = hashy.Elems;
-
-
-          elemArray.forEach( (elem) => {
-            var elemOffset = elem.offsetTop + hashy.GlobalOffset;
-            var elemHeight = elem.offsetHeight || elem.clientHeight;
-            var height = window.innerHeight || document.documentElement.clientHeight;
-            if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
-              // console.log(elem, hashy.SelectedElem);
-              if (elem !== hashy.SelectedElem ) {
-                hashy.SelectedElem = elem;
-                hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
-              };
-            }
-          });
-
-          hashy.runtime = requestAnimationFrame(getPosition);
-        };
-
-
-        return getPosition();
-
+    hashy.getPosition = () => {
+      hashy.ScrollOffset = window.pageYOffset || window.scrollTop;
+      if (hashy.ScrollOffset == null) {
+        hashy.ScrollOffset = 0;
       };
 
-      scrollPos();
+      var elemArray = hashy.Elems;
 
-    }
+      elemArray.forEach( (elem) => {
+        var elemOffset = elem.offsetTop + hashy.GlobalOffset;
+        var elemHeight = elem.offsetHeight || elem.clientHeight;
+        var height = window.innerHeight || document.documentElement.clientHeight;
+        if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
+          if (elem !== hashy.SelectedElem ) {
+            hashy.SelectedElem = elem;
+            hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
+          };
+        }
+      });
+
+      hashy.runtime = requestAnimationFrame(hashy.getPosition);
+    };
+
+
+
+
+
 
 
     hashy.bind = (elems) => {
@@ -75,7 +63,6 @@
           }
           elem.onclick = function(e){
             e.preventDefault ? e.preventDefault() : (e.returnValue = false);
-            e.preventDefault();
             hashy.go(e.target.getAttribute(attr),true)
           };
       }
@@ -84,9 +71,8 @@
     hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
-        console.log('callback');
         hashy.setHash(hash,history, () => {
-          hashy.checkElem();
+          // hashy.getPosition()
         });
       });
     }
@@ -97,19 +83,13 @@
         console.log('pushing to history');
         hashy.history.pushState({ hash: hash}, null, '#' + hash);
         hashy.Hash = hash;
-        if (callback) {
-          callback();
-        }
+        if (callback) callback();
       } else if( window.location.hash !== '#' + hash &&  hashy.Hash !== hash && !hashy.history) {
         hashy.Hash = hash;
         window.location.hash = hash;
-        if (callback) {
-          callback();
-        }
+        if (callback) callback();
       } else  {
-        if (callback) {
-            callback();
-          }
+        if (callback) callback();
       }
     }
 
@@ -184,10 +164,20 @@
 
 
     hashy.init = () => {
-      hashy.bind(hashy.TriggerElems)
+      hashy.bind(hashy.TriggerElems);
       if (!hashy.history){
        hashy.history = window.history;
       }
+      if(window.location.hash.length && window.location.hash != 'undefined'){
+        let cleanHash = window.location.hash.replace('#', '');
+        if (window.history){
+          hashy.history = window.history;
+        }
+        hashy.go(cleanHash,false);
+      }else {
+          hashy.getPosition();
+      }
+      // hashy.checkElem();
     }
 
 
@@ -254,13 +244,7 @@
     // On pageload:
     // ===========================================================================
 
-    if(window.location.hash.length && window.location.hash != 'undefined'){
-      let cleanHash = window.location.hash.replace('#', '');
-      if (window.history){
-        hashy.history = window.history;
-      }
-      hashy.go(cleanHash,false);
-    }
+
 
   // ===========================================================================
 
