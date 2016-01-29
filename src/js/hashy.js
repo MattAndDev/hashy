@@ -114,10 +114,12 @@
     hashy.scrollTo = (elem, hash, callback) => {
       cancelAnimationFrame(hashy.runtime);
       hashy.IsScrolling = true;
-      if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
+      if (elem && elem.offsetTop < (hashy.GlobalOffset * -1)) {
         var elemPos = elem.offsetTop + 1 ;
-      } else {
+      } else if (elem){
         var elemPos = elem.offsetTop + 1 + hashy.GlobalOffset;
+      } else {
+        var elemPos = 0;
       }
       if (elemPos > hashy.ScrollOffset) {
         var i = hashy.ScrollOffset;
@@ -168,14 +170,11 @@
 
     hashy.init = () => {
       hashy.bind(hashy.TriggerElems);
-      if (!hashy.history){
+      if (!hashy.history && window.history){
        hashy.history = window.history;
       }
       if(window.location.hash.length && window.location.hash != 'undefined'){
         let cleanHash = window.location.hash.replace('#', '');
-        if (window.history){
-          hashy.history = window.history;
-        }
         hashy.go(cleanHash,false);
       }else {
           hashy.getPosition();
