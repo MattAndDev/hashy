@@ -37,6 +37,7 @@
         var elemHeight = elem.offsetHeight || elem.clientHeight;
         var height = window.innerHeight || document.documentElement.clientHeight;
         if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
+          console.log('yeag');
           if (elem !== hashy.SelectedElem ) {
             hashy.SelectedElem = elem;
             hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
@@ -46,12 +47,6 @@
 
       hashy.runtime = requestAnimationFrame(hashy.getPosition);
     };
-
-
-
-
-
-
 
     hashy.bind = (elems) => {
       for(var i =0; i < elems.length; i++){
@@ -66,19 +61,23 @@
             hashy.go(e.target.getAttribute(attr),true)
           };
       }
+      return false;
     }
 
     hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
+        console.log('done scrolling');
         hashy.setHash(hash,history, () => {
           hashy.runtime = requestAnimationFrame(hashy.getPosition);
         });
       });
+      return false;
     }
 
 
     hashy.setHash = (hash, history, callback) => {
+      console.log(history);
       if (hashy.history &&  history === true && hashy.Hash != hash || hashy.history &&  history === true && hashy.Hash == null ){
         console.log('pushing to history');
         hashy.history.pushState({ hash: hash}, null, '#' + hash);
@@ -91,6 +90,7 @@
       } else  {
         if (callback) callback();
       }
+      return false;
     }
 
     hashy.checkOffset = (offset) => {
@@ -121,9 +121,9 @@
       } else {
         var elemPos = 0;
       }
-      if (elemPos > hashy.ScrollOffset) {
-        var i = hashy.ScrollOffset;
-        var y = elemPos;
+      var i = hashy.ScrollOffset;
+      var y = elemPos;
+      if (y > i) {
         var diff = y -i;
         var scrollPlus = () => {
           if(i < y){
@@ -144,8 +144,6 @@
         var interval = setInterval(scrollPlus, 1);
 
       } else {
-        var i = hashy.ScrollOffset;
-        var y = elemPos;
         var diff = i - y;
         var scrollMinus = () => {
         if(i > y){
@@ -162,9 +160,9 @@
           callback();
           }
         }
-
         var interval = setInterval(scrollMinus, 1);
       };
+      return false;
     }
 
 
@@ -187,18 +185,17 @@
     // ===========================================================================
 
     //  Raf runtime
-    hashy.runtime = function(){};
+    hashy.runtime;
     hashy.Hash = null;
     hashy.Elems = [].slice.call(document.querySelectorAll(this.itemClass));
     hashy.TriggerElems = document.querySelectorAll(this.triggerClass);
     hashy.ScrollOffset = 0;
     hashy.SelectedElem = null;
     hashy.IsScrolling = null;
-
-
-
-    // checks if offset is class and set value
     hashy.GlobalOffset = hashy.checkOffset(this.offset);
+
+
+
 
 
     // Repeat the check after resize
@@ -215,8 +212,9 @@
     };
 
 
-    window.onpopstate = (event) => {
-      event.preventDefault();
+    window.onpopstate = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (event.state != null) {
         hashy.go(event.state.hash,false);
       }else {
@@ -227,22 +225,14 @@
     }
 
 
-    window.onhashchange = (event) => {
-      event.preventDefault();
+    window.onhashchange = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
     }
 
 
-    // ===========================================================================
-    // Finish init global vars
-    // ===========================================================================
+    hashy.init()
 
-    // ===========================================================================
-    // On pageload:
-    // ===========================================================================
-
-
-
-  // ===========================================================================
 
 
     // raf polifill
@@ -269,8 +259,6 @@
       window.cancelAnimationFrame = function(id) {
           clearTimeout(id);
     };
-    // Starting the magic
-    hashy.init()
 
     // Closing hashy
   };
