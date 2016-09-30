@@ -6,20 +6,6 @@
     "type": "git",
     "url": ""
   },
-  "browser": {
-    "hashy": "./src/js/hashy.js"
-  },
-  "browserify-shim": {
-    "hashy": {
-      "exports": "hashy"
-    }
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim",
-      "babelify"
-    ]
-  },
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.16.0",

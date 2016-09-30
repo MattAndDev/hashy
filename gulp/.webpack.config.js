@@ -1,8 +1,7 @@
 import path from 'path'
-module.exports = {
-  output: {
-    filename: 'hashy.js',
-  },
+
+
+let base = {
   resolve: {
       alias: {
       }
@@ -21,9 +20,36 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel',
         query: {
-          presets: ['es2015']
+          presets: ['es2015'],
+          plugins: [
+            'babel-plugin-transform-class-properties',
+            'babel-plugin-transform-strict-mode'
+          ]
         }
       }
     ]
   }
 }
+
+// test
+let test = {
+  output: {
+    filename: 'main.js',
+  }
+}
+
+// distribution
+let dist = {
+  output: {
+    filename: 'hashy.js',
+  }
+}
+
+// merge test and base
+for (var attrname in base) { test[attrname] = base[attrname]; }
+// export test config
+module.exports.test = test
+
+for (var attrname in base) { dist[attrname] = base[attrname]; }
+// merge test and base
+module.exports.dist = dist

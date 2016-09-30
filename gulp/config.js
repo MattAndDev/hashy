@@ -62,7 +62,7 @@ module.exports = {
     dest: dest + '/',
     test: {
       src: src + '/js/main.js',
-      dest: test + '/'
+      dest: test + '/js/'
     }
   }
 };

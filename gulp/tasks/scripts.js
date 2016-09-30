@@ -14,8 +14,8 @@ gulp.task('scripts', () => {
 
 // for tests
 gulp.task('scripts_test', () => {
-  return gulp.src(config.scripts.src)
-    .pipe(webpack(webpackConfig))
+  return gulp.src(config.scripts.test.src)
+    .pipe(webpack(webpackConfig.test))
     .on('error', handleErrors)
     .pipe(gulp.dest(config.scripts.test.dest))
 })
@@ -23,7 +23,7 @@ gulp.task('scripts_test', () => {
 // for production
 gulp.task('scripts_dist', () => {
   return gulp.src(config.scripts.src)
-    .pipe(webpack(webpackConfig))
+    .pipe(webpack(webpackConfig.dist))
     .on('error', handleErrors)
     .pipe(uglify())
     .pipe(gulp.dest(config.scripts.dest))
