@@ -1,0 +1,3 @@
+gulp/* linguist-vendored
+src/* linguist-vendored
+test/* linguist-vendored
