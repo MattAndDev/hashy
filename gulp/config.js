@@ -57,11 +57,12 @@ module.exports = {
   // ============================================
 
   scripts: {
-    src: src + '/js/main.js',
     srcAll: src + '/js/**/*.js',
+    src: src + '/js/hashy.js',
     dest: dest + '/',
     test: {
-      dest: dest + '/'
+      src: src + '/js/main.js',
+      dest: test + '/'
     }
   }
 };
