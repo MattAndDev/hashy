@@ -1,12 +1,10 @@
 import path from 'path'
 module.exports = {
   output: {
-    filename: 'main.js',
+    filename: 'hashy.js',
   },
   resolve: {
       alias: {
-        bootstrap: "bootstrap/dist/js/bootstrap.js",
-        owlcarousel: "owlcarousel-pre/owl-carousel/owl.carousel.js"
       }
   },
   resolveLoader: {
