@@ -5,7 +5,6 @@ var config = require('../config').markup;
 var browserSync = require('browser-sync');
 var include = require('gulp-file-include');
 var rename = require('gulp-rename');
-var minifyHTML = require('gulp-minify-html');
 
 gulp.task('markup', function() {
   return gulp.src(config.src)

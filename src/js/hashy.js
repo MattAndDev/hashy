@@ -37,7 +37,6 @@
         var elemHeight = elem.offsetHeight || elem.clientHeight;
         var height = window.innerHeight || document.documentElement.clientHeight;
         if (hashy.ScrollOffset + height > elemOffset && hashy.ScrollOffset > elemOffset && hashy.ScrollOffset < elemOffset + elemHeight ) {
-          console.log('yeag');
           if (elem !== hashy.SelectedElem ) {
             hashy.SelectedElem = elem;
             hashy.setHash(hashy.SelectedElem.getAttribute(this.itemAttr),true);
@@ -47,6 +46,12 @@
 
       hashy.runtime = requestAnimationFrame(hashy.getPosition);
     };
+
+
+
+
+
+
 
     hashy.bind = (elems) => {
       for(var i =0; i < elems.length; i++){
@@ -61,23 +66,19 @@
             hashy.go(e.target.getAttribute(attr),true)
           };
       }
-      return false;
     }
 
     hashy.go = (hash, history) => {
       let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]');
       hashy.scrollTo(elem, hash, () => {
-        console.log('done scrolling');
         hashy.setHash(hash,history, () => {
-          hashy.runtime = requestAnimationFrame(hashy.getPosition);
+          hashy.getPosition()
         });
       });
-      return false;
     }
 
 
     hashy.setHash = (hash, history, callback) => {
-      console.log(history);
       if (hashy.history &&  history === true && hashy.Hash != hash || hashy.history &&  history === true && hashy.Hash == null ){
         console.log('pushing to history');
         hashy.history.pushState({ hash: hash}, null, '#' + hash);
@@ -90,7 +91,6 @@
       } else  {
         if (callback) callback();
       }
-      return false;
     }
 
     hashy.checkOffset = (offset) => {
@@ -114,16 +114,14 @@
     hashy.scrollTo = (elem, hash, callback) => {
       cancelAnimationFrame(hashy.runtime);
       hashy.IsScrolling = true;
-      if (elem && elem.offsetTop < (hashy.GlobalOffset * -1)) {
+      if (elem.offsetTop < (hashy.GlobalOffset * -1)) {
         var elemPos = elem.offsetTop + 1 ;
-      } else if (elem){
-        var elemPos = elem.offsetTop + 1 + hashy.GlobalOffset;
       } else {
-        var elemPos = 0;
+        var elemPos = elem.offsetTop + 1 + hashy.GlobalOffset;
       }
-      var i = hashy.ScrollOffset;
-      var y = elemPos;
-      if (y > i) {
+      if (elemPos > hashy.ScrollOffset) {
+        var i = hashy.ScrollOffset;
+        var y = elemPos;
         var diff = y -i;
         var scrollPlus = () => {
           if(i < y){
@@ -144,6 +142,8 @@
         var interval = setInterval(scrollPlus, 1);
 
       } else {
+        var i = hashy.ScrollOffset;
+        var y = elemPos;
         var diff = i - y;
         var scrollMinus = () => {
         if(i > y){
@@ -160,23 +160,27 @@
           callback();
           }
         }
+
         var interval = setInterval(scrollMinus, 1);
       };
-      return false;
     }
 
 
     hashy.init = () => {
       hashy.bind(hashy.TriggerElems);
-      if (!hashy.history && window.history){
+      if (!hashy.history){
        hashy.history = window.history;
       }
       if(window.location.hash.length && window.location.hash != 'undefined'){
         let cleanHash = window.location.hash.replace('#', '');
+        if (window.history){
+          hashy.history = window.history;
+        }
         hashy.go(cleanHash,false);
       }else {
-        hashy.runtime = requestAnimationFrame(hashy.getPosition);
+          hashy.getPosition();
       }
+      // hashy.checkElem();
     }
 
 
@@ -185,17 +189,18 @@
     // ===========================================================================
 
     //  Raf runtime
-    hashy.runtime;
+    hashy.runtime = function(){};
     hashy.Hash = null;
     hashy.Elems = [].slice.call(document.querySelectorAll(this.itemClass));
     hashy.TriggerElems = document.querySelectorAll(this.triggerClass);
     hashy.ScrollOffset = 0;
     hashy.SelectedElem = null;
     hashy.IsScrolling = null;
+
+
+
+    // checks if offset is class and set value
     hashy.GlobalOffset = hashy.checkOffset(this.offset);
-
-
-
 
 
     // Repeat the check after resize
@@ -212,9 +217,8 @@
     };
 
 
-    window.onpopstate = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    window.onpopstate = (event) => {
+      event.preventDefault();
       if (event.state != null) {
         hashy.go(event.state.hash,false);
       }else {
@@ -225,14 +229,22 @@
     }
 
 
-    window.onhashchange = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+    window.onhashchange = (event) => {
+      event.preventDefault();
     }
 
 
-    hashy.init()
+    // ===========================================================================
+    // Finish init global vars
+    // ===========================================================================
 
+    // ===========================================================================
+    // On pageload:
+    // ===========================================================================
+
+
+
+  // ===========================================================================
 
 
     // raf polifill
@@ -259,6 +271,8 @@
       window.cancelAnimationFrame = function(id) {
           clearTimeout(id);
     };
+    // Starting the magic
+    hashy.init()
 
     // Closing hashy
   };
