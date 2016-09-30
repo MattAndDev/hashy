@@ -1,7 +1,7 @@
 'use strict';
 
-var dest = "./dist";
-var test = "./test";
+var dest = './dist';
+var test = './test';
 var src = './src';
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
   },
 
   sass: {
-    src: src + "/sass/**/*.{sass,scss}",
+    src: src + '/sass/**/*.{sass,scss}',
     dest: test + '/css',
     prefix: [
       'ie >= 9',
@@ -40,34 +40,28 @@ module.exports = {
 
 
   markup: {
-    partialsGlob: "**/*.html",
+    partialsGlob: '**/*.html',
     partialsSrc: src + '/html/partials/',
-    src: src + "/html/*.tpl.html",
-    dest: test + "/"
+    src: src + '/html/*.tpl.html',
+    dest: test + '/'
   },
 
-  jslint: {
-    srcJs: src + '/js/**/*.js'
-  },
 
   library: {
     jsSrc: src + '/js/hashy.js',
     dest: dest
   },
 
+  // ============================================
+  // scripts.js
+  // ============================================
 
-  browserify: {
-    // A separate bundle will be generated for each
-    // bundle config in the list below
-    bundleConfigs: [{
-      entries: src + '/js/main.js',
-      dest: test + '/js',
-      outputName: 'main.js',
-      // Additional file extentions to make optional
-      extensions: ['.js'],
-      // list of modules to make require-able externally
-      require: ['jquery']
+  scripts: {
+    src: src + '/js/main.js',
+    srcAll: src + '/js/**/*.js',
+    dest: dest + '/',
+    test: {
+      dest: dest + '/'
     }
-  ]
   }
 };
