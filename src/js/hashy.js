@@ -14,7 +14,7 @@ export default class Hashy {
     this.itemAttr = options.itemAttr || 'data-hash'
     this.triggerClass = options.triggerClass || '.hashy-go'
     this.triggerAttr = options.triggerAttr || 'href'
-    this.averageSpeed = options.averageSpeed || 100
+    this.averageSpeed = options.averageSpeed || 50
     this.offset = options.offset || 0
 
 
@@ -38,14 +38,13 @@ export default class Hashy {
       this.ScrollOffset = document.documentElement.scrollTop || document.body.scrollTop
     }
 
-    // TODO: refactor this to be event listener?
-    window.onresize = function () {
+    window.onresize = () => {
       clearTimeout(resizeTimeout)
       resizeTimeout = setTimeout(this.doneResize, 100)
     }
 
-
     window.onpopstate = (event) => {
+      cancelAnimationFrame(this.runtime)
       event.preventDefault()
       if (event.state != null) {
         this.go(event.state.hash, false)
@@ -57,18 +56,34 @@ export default class Hashy {
       return false
     }
 
-
     window.onhashchange = (event) => {
       event.preventDefault()
     }
+
     this.init()
   }
 
 
-    // TODO: addoption for data title _> push state
+  init () {
+    this.bind(this.TriggerElems)
+    if (!this.history) {
+      this.history = window.history
+    }
+    if (window.location.hash.length && window.location.hash !== 'undefined') {
+      let cleanHash = window.location.hash.replace('#', '')
+      if (window.history) {
+        this.history = window.history
+      }
+      this.go(cleanHash, false)
+    }
+    else {
+      this.scrollListener()
+    }
+  }
+  // TODO: addoption for data title _> push state
 
 
-  getPosition = () => {
+  scrollListener = () => {
     this.ScrollOffset = window.pageYOffset || window.scrollTop
     if (this.ScrollOffset == null) {
       this.ScrollOffset = 0
@@ -88,7 +103,7 @@ export default class Hashy {
       }
     })
 
-    this.runtime = requestAnimationFrame(this.getPosition)
+    this.runtime = requestAnimationFrame(this.scrollListener)
   }
 
 
@@ -104,34 +119,37 @@ export default class Hashy {
       }
       elem.onclick = (e) => {
         e.preventDefault ? e.preventDefault() : (e.returnValue = false)
+        cancelAnimationFrame(this.runtime)
         this.go(e.target.getAttribute(attr), true)
       }
     }
   }
 
-  go (hash, history) {
+  go (hash, saveToHistory) {
     let elem = document.querySelector('[' + this.itemAttr + '="' + hash + '"]')
     this.scrollTo(elem, hash, () => {
-      this.setHash(hash,history, () => {
-        this.getPosition()
+      this.setHash(hash, saveToHistory, () => {
+        setTimeout(() => {
+          this.scrollListener()
+        }, 200)
       })
     })
   }
 
 
-  setHash (hash, history, callback) {
-    if (this.history && history === true && this.Hash !== hash || this.history && history === true && this.Hash == null ){
+  setHash (hash, saveToHistory, callback) {
+    if (this.history && saveToHistory && this.Hash !== hash || this.history && this.Hash == null) {
       console.log('pushing to history')
       this.history.pushState({hash: hash}, null, '#' + hash)
       this.Hash = hash
       if (callback) callback()
     }
-    else if (window.location.hash !== '#' + hash && his.Hash !== hash && !this.history) {
+    else if (window.location.hash !== '#' + hash && this.Hash !== hash && !this.history) {
       this.Hash = hash
       window.location.hash = hash
       if (callback) callback()
     }
-    else  {
+    else {
       if (callback) callback()
     }
   }
@@ -168,69 +186,40 @@ export default class Hashy {
     }
     var i = this.ScrollOffset
     var y = elemPos
+    var diff, interval
     if (elemPos > this.ScrollOffset) {
-      var diff = y - i
-      var scrollPlus = () => {
-        if (i < y) {
-          i = i + diff / this.averageSpeed
-          document.body.scrollTop = i
-          document.documentElement.scrollTop = i
-        }
-        else {
-          document.documentElement.scrollTop = elemPos
-          document.body.scrollTop = elemPos
-          this.ScrollOffset = elemPos
-          this.SelectedElem = elem
-          clearInterval(interval)
-          this.IsScrolling = false
-          callback()
-        }
-      }
-
-      var interval = setInterval(scrollPlus, 1)
+      diff = y - i
     }
     else {
-      var diff = i - y
-      var scrollMinus = () => {
-        if (i > y) {
-          i = i - diff/this.averageSpeed
-          document.body.scrollTop = i
-          document.documentElement.scrollTop = i
-        }
-        else {
-          document.documentElement.scrollTop = elemPos
-          document.body.scrollTop = elemPos
-          this.ScrollOffset = elemPos
-          this.SelectedElem = elem
-          clearInterval(interval)
-          this.IsScrolling = false
-          callback()
-        }
+      diff = i - y
+    }
+    this.scroller = () => {
+      if (i < y - diff / this.averageSpeed) {
+        i = Math.round(i + diff / this.averageSpeed)
+        document.body.scrollTop = i
+        document.documentElement.scrollTop = i
+        this.ScrollOffset = i
       }
-
-      var interval = setInterval(scrollMinus, 1)
-    }
-  }
-
-
-  init () {
-    this.bind(this.TriggerElems)
-    if (!this.history) {
-      this.history = window.history
-    }
-    if (window.location.hash.length && window.location.hash !== 'undefined') {
-      let cleanHash = window.location.hash.replace('#', '')
-      if (window.history) {
-        this.history = window.history
+      else if (i > y + diff / this.averageSpeed) {
+        i = Math.round(i - diff / this.averageSpeed)
+        document.body.scrollTop = i
+        document.documentElement.scrollTop = i
+        this.ScrollOffset = i
       }
-      this.go(cleanHash, false)
+      else {
+        document.documentElement.scrollTop = elemPos
+        document.body.scrollTop = elemPos
+        this.ScrollOffset = elemPos
+        this.SelectedElem = elem
+        this.IsScrolling = false
+        callback()
+        cancelAnimationFrame(this.runtime)
+        return false
+      }
+      this.runtime = requestAnimationFrame(this.scroller)
     }
-    else {
-      this.getPosition()
-    }
-    // this.checkElem()
+
+    this.scroller()
   }
-
-
 
 }
